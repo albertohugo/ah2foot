@@ -7,4 +7,14 @@
     <string name="table">Table</string>
     <string name="matches">Macthes</string>
     <string name="teams">Teams</string>
+
+
+    <string-array name="category">
+    <item>Top News</item>
+    <item>Business</item>
+    <item>Politics</item>
+    <item>Sports</item>
+    <item>Technology</item>
+    <item>Movies</item>
+</string-array>
 </resources>
