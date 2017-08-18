@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private Spinner navigationSpinner;
 
-    private static String urlTable = "http://api.football-data.org/v1/competitions/457/leagueTable";
+    private static String urlTable = "http://api.football-data.org/v1/competitions/";
     private LinearLayout tabelaLayout;
     private static final String TAG_CLASSIFICACAO= "position";
     private static final String TAG_CLUBE = "teamName";
@@ -49,12 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_SALDO = "goals";
     private ListView lv;
     private ArrayList<HashMap<String, String>> tabelaList;
-
-    private static String urlCompetitions = "http://api.football-data.org/v1/competitions/?season=2017";
-    private static final String TAG_CAMPEONATO= "caption";
-    private static final String TAG_IDCAMPEONATO = "id";
-    private ArrayList<Campeonato> listCamp = new ArrayList<Campeonato>();
-
+    private String idCampeonato;
+    
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -91,15 +87,76 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setLogo(R.mipmap.ic_launcher);
-
-
-
-        new GetCampeonatos().execute();
-
-
-
-
-
+        
+        category = getResources().getStringArray(R.array.category);
+        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.category, R.layout.spinner_dropdown_item);
+        navigationSpinner = new Spinner(getSupportActionBar().getThemedContext());
+        navigationSpinner.setAdapter(spinnerAdapter);
+        toolbar.addView(navigationSpinner, 0);
+        navigationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+               // Toast.makeText(MainActivity.this,"you selected: " + category[i],Toast.LENGTH_SHORT).show();
+                tabelaList.clear();
+                
+                switch (category[i]) {
+                    case "Campeonato Brasileiro da Série A":
+                        idCampeonato="444";
+                        break;
+                    case "Premier League 2017/18":
+                        idCampeonato="445";
+                        break;
+                    case "Championship 2017/18":
+                        idCampeonato="446";
+                        break;
+                    case "League One 2017/18":
+                        idCampeonato="447";
+                        break;
+                    case "League Two 2017/18":
+                        idCampeonato="448";
+                        break;
+                    case "Eredivisie 2017/18":
+                        idCampeonato="449";
+                        break;
+                    case "Ligue 1 2017/18":
+                        idCampeonato="450";
+                        break;
+                    case "Ligue 2 2017/18":
+                        idCampeonato="451";
+                        break;
+                    case "1. Bundesliga 2017/18":
+                        idCampeonato="452";
+                        break;
+                    case "2. Bundesliga 2017/18":
+                        idCampeonato="453";
+                        break;
+                    case "Primera Division 2017":
+                        idCampeonato="455";
+                        break;
+                    case "Serie A 2017/18":
+                        idCampeonato="456";
+                        break;
+                    case "Primeira Liga 2017/18":
+                        idCampeonato="457";
+                        break;
+                    case "DFB-Pokal 2017/18":
+                        idCampeonato="458";
+                        break;
+                    case "Serie B 2017/18":
+                        idCampeonato="459";
+                        break;
+                    default:
+                        break;
+                }
+                new GetTabela().execute();
+            }
+        
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            
+            }
+        });
+        
         mTextMessage = (TextView) findViewById(R.id.message);
     
         tabelaLayout = (LinearLayout) findViewById(R.id.tabelaLayout);
@@ -117,21 +174,17 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Atualizando...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+//            pDialog = new ProgressDialog(MainActivity.this);
+//            pDialog.setMessage("Atualizando...");
+//            pDialog.setCancelable(false);
+//            pDialog.show();
         }
         
         @Override
         protected Void doInBackground(Void... arg0) {
-            
             JsonParseHandler sh = new JsonParseHandler();
-            
-            String jsonStr = sh.serviceCall(urlTable, JsonParseHandler.GET);
-            
+            String jsonStr = sh.serviceCall(urlTable+idCampeonato+"/leagueTable", JsonParseHandler.GET);
             Log.d("Response: ", "> " + jsonStr);
-            
             if (jsonStr != null) {
                 try {
                     //JSONObject jsonObj = new JSONObject(jsonStr);
@@ -179,12 +232,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+//            if (pDialog.isShowing())
+//              pDialog.dismiss();
             
             if (MainActivity.this != null){
+                
+                ListAdapter adapter;
                
-                ListAdapter adapter = new SimpleAdapter(
+                adapter = new SimpleAdapter(
                         MainActivity.this, tabelaList,
                         R.layout.list_item_tabela, new String[] { TAG_CLASSIFICACAO, TAG_CLUBE, TAG_PONTOS, TAG_VITORIAS, TAG_JOGOS, TAG_EMPATES, TAG_DERROTAS, TAG_SALDO }, new int[] { R.id.classificacao, R.id.clube, R.id.pontos, R.id.vitorias, R.id.jogos, R.id.empates, R.id.derrotas, R.id.saldo,
                 });
@@ -195,91 +250,5 @@ public class MainActivity extends AppCompatActivity {
         
     }
 
-    private class GetCampeonatos extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-            JsonParseHandler sh = new JsonParseHandler();
-            String jsonStr = sh.serviceCall(urlCompetitions, JsonParseHandler.GET);
-
-            Log.d("Response: ", "> " + jsonStr);
-
-            if (jsonStr != null) {
-                try {
-
-                    JSONArray elenco = new JSONArray(jsonStr);
-
-                    // elenco = jsonObj.getJSONArray(TAG_CONTACTS);
-
-                    for (int i = 0; i < elenco.length(); i++) {
-                        JSONObject c = elenco.getJSONObject(i);
-
-                        String campeonato = c.getString(TAG_CAMPEONATO);
-                        String id_campeonato = c.getString(TAG_IDCAMPEONATO);
-
-                        Campeonato camp = new Campeonato(id_campeonato, campeonato);
-                        listCamp.add(camp);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e("ServiceHandler", "Couldn't get any data from the url");
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            category = listCampeonatoLabel(listCamp);//getResources().getStringArray(R.array.category);
-           // category = getResources().getStringArray(R.array.category);
-            SpinnerAdapter adapter = new ArrayAdapter<String>(
-                    getApplicationContext(), R.layout.spinner_dropdown_item, category);
-            SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.category, R.layout.spinner_dropdown_item);
-            navigationSpinner = new Spinner(getSupportActionBar().getThemedContext());
-            //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            navigationSpinner.setAdapter(adapter);
-            toolbar.addView(navigationSpinner, 0);
-
-            navigationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    Toast.makeText(MainActivity.this,
-                            "you selected: " + category[i],
-                            Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-        }
-
-    }
-
-    public String[] listCampeonatoLabel(ArrayList<Campeonato> listCamp){
-        String[] list = new String[100];
-        ArrayList<String> listItems = new ArrayList<String>();
-        for (int i = 0; i < listCamp.size(); ++i) {
-            //listItems.add(listCamp.get(i).getCampeonato());
-            String str=listCamp.get(i).getCampeonato();
-            list[i]=str;
-        }
-
-
-        return list;
-    }
     
 }
