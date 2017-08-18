@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="25dp"
+              android:gravity="center" >
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:paddingLeft="10dp"
+        android:textSize="@dimen/size_text_tabela"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/classificacao" />
+
+    <TextView
+        android:id="@+id/clube"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="@dimen/size_text_tabela"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:layout_weight="1"
+        android:id="@+id/pontos" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:layout_weight="1"
+        android:id="@+id/jogos" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:layout_weight="1"
+        android:id="@+id/empates" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:layout_weight="1"
+        android:id="@+id/derrotas" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:layout_weight="1"
+        android:id="@+id/saldo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_text_tabela"
+        android:text="1"
+        android:paddingRight="10dp"
+        android:id="@+id/vitorias" />
+</LinearLayout>
